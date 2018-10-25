@@ -8,6 +8,7 @@ yarn-error.log*
 .vscode
 .project
 .settings
+.settings/*
 .classpath
 
 # Runtime data
