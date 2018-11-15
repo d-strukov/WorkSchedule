@@ -9,7 +9,7 @@ public class SchoolPickup {
 
 	public static void main(String[] args) {
 		// Set initial temp
-		double temp = 1000;
+		double temp = 100000;
 
 		// Cooling rate
 		double coolingRate = 0.000002;
@@ -29,13 +29,13 @@ public class SchoolPickup {
 		Random rand = new Random(seed);
 
 		// Loop until system has cooled
-		while (temp > 1) {
+		while (temp > 0) {
 
 			for (int dimension = 0; dimension <= 30; dimension++) {
 
 				int improvement = Integer.MAX_VALUE;
 				int previousImprovement = -1;
-				int step = rand.nextBoolean() ? -1 : 1;
+				int step = rand.nextBoolean() ? -15 : 15;
 				int stepIncreaseFactor = 1;
 				while (improvement > 0) {
 					// Create new neighbour tour
@@ -60,8 +60,8 @@ public class SchoolPickup {
 					
 					
 					if (improvement > 0) {
-						step *= stepIncreaseFactor;
-						step =Math.min(step, 60);
+						//step *= stepIncreaseFactor;
+						//step =Math.min(step, 60);
 						stepIncreaseFactor++;
 						previousImprovement = improvement;
 					}

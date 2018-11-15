@@ -8,13 +8,13 @@ public class Schedule {
 	static ScheduleInputData data = new ScheduleInputData(Utils.toMinutes(38, 00), Utils.toMinutes(39, 00),
 			Utils.toMinutes(5, 00), (int) Utils.toMinutes(7, 45), (int) Utils.toMinutes(7, 30), 17 * 60+15,
 			 18 * 60,
-			new int[] { Utils.toMinutes(8, 10), Utils.toMinutes(8, 10), Utils.toMinutes(8, 10), Utils.toMinutes(8, 10),
-					Utils.toMinutes(8, 10) },
+			new int[] { Utils.toMinutes(8, 25), Utils.toMinutes(8, 25), Utils.toMinutes(8, 25), Utils.toMinutes(8, 25),
+					Utils.toMinutes(8, 25) },
 			new int[] { Utils.toMinutes(15, 30), Utils.toMinutes(15, 30), Utils.toMinutes(12, 00),
 					Utils.toMinutes(15, 30), Utils.toMinutes(15, 30) },
 			Utils.toMinutes(0, 35), Utils.toMinutes(0, 20));
 
-	byte[] pickupFlag = new byte[] { 1, 1, 1, 1, 1 };
+	byte[] pickupFlag = new byte[] { 1, 1, 2, 1, 1 };
 	byte[] dropOffFlag = new byte[] { 1, 1, 1, 1, 1 };
 
 	int[] workStart1 = new int[5];
@@ -23,16 +23,16 @@ public class Schedule {
 	int[] workStart2 = new int[5];
 	int[] workHours2 = new int[5];
 
-	static int penGrandma = 10000;
+	static int penGrandma = 5000;
 
 	static int penPickUpToEarly = 10;
-	static int penPickUpToLate = 3000;
+	static int penPickUpToLate = 300;
 
-	static int penDropOffToEarly = 3000;
+	static int penDropOffToEarly = 300;
 	static int penDropOffToLate = 10;
 
-	static int penUndertime = 1000;
-	static int penOvertime = 10;
+	static int penUndertime = 300;
+	static int penOvertime = 200;
 
 	static int penOverhead = 10;
 
@@ -195,8 +195,8 @@ public class Schedule {
 
 		total += Utils.penaltyLinear(beforeHardStart, 100);
 		total += Utils.penaltyLinear(afterHardStop, 100);
-		total += Utils.penaltyLinear(beforePreferedStart, 10);
-		total += Utils.penaltyLinear(afterPreferedStop, 10);
+		total += Utils.penaltyLinear(beforePreferedStart, 20);
+		total += Utils.penaltyLinear(afterPreferedStop, 20);
 
 		total += Utils.penaltyXn(grandmaUseCount, penGrandma);
 		total += Utils.penaltyLinear(dropOffTooEarly, penDropOffToEarly);
@@ -218,13 +218,13 @@ public class Schedule {
 		Schedule s = new Schedule(this);
 		int position = 0;
 		if (dimension < (position += s.pickupFlag.length)) {
-			s.pickupFlag[position - dimension - 1] += step;
+			s.pickupFlag[position - dimension - 1] += step/15;
 			if (s.pickupFlag[position - dimension - 1] > 2)
 				s.pickupFlag[position - dimension - 1] = 2;
 			else if (s.pickupFlag[position - dimension - 1] < 0)
 				s.pickupFlag[position - dimension - 1] = 0;
 		} else if (dimension < (position += s.dropOffFlag.length)) {
-			s.dropOffFlag[position - dimension - 1] += step;
+			s.dropOffFlag[position - dimension - 1] += step/15;
 			if (s.dropOffFlag[position - dimension - 1] > 2)
 				s.dropOffFlag[position - dimension - 1] = 2;
 			else if (s.dropOffFlag[position - dimension - 1] < 0)

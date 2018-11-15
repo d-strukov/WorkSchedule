@@ -1,0 +1,15 @@
+apply plugin: 'eclipse-wtp'
+apply plugin: 'java'
+
+repositories {
+   jcenter()
+}
+
+
+sourceSets {
+  main {
+    java {
+        srcDir 'src'
+    }
+  }
+}
