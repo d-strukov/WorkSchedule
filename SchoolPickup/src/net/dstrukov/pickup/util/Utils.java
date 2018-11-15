@@ -6,6 +6,7 @@ public class Utils {
 	}
 	
 	public static int penaltyLinear(int count, int multiplier){
+		count = count >0? count : 0;
 		return count * multiplier;
 	}
 	public static int penaltyXn(int n, int x){

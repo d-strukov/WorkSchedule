@@ -1,4 +1,5 @@
 apply plugin: 'eclipse-wtp'
+apply plugin: 'eclipse'
 apply plugin: 'java'
 
 repositories {

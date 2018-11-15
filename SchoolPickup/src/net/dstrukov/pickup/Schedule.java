@@ -5,8 +5,8 @@ import java.util.Arrays;
 import net.dstrukov.pickup.util.Utils;
 
 public class Schedule {
-	static ScheduleInputData data = new ScheduleInputData(Utils.toMinutes(38, 00), Utils.toMinutes(39, 00),
-			Utils.toMinutes(5, 00), (int) Utils.toMinutes(7, 45), (int) Utils.toMinutes(7, 30), 17 * 60+15,
+	public static ScheduleInputData data = new ScheduleInputData(Utils.toMinutes(38, 00), Utils.toMinutes(39, 00),
+			Utils.toMinutes(5, 00), (int) Utils.toMinutes(7, 30), (int) Utils.toMinutes(7, 30), 17 * 60+15,
 			 18 * 60,
 			new int[] { Utils.toMinutes(8, 25), Utils.toMinutes(8, 25), Utils.toMinutes(8, 25), Utils.toMinutes(8, 25),
 					Utils.toMinutes(8, 25) },
@@ -14,16 +14,18 @@ public class Schedule {
 					Utils.toMinutes(15, 30), Utils.toMinutes(15, 30) },
 			Utils.toMinutes(0, 35), Utils.toMinutes(0, 20));
 
-	byte[] pickupFlag = new byte[] { 1, 1, 2, 1, 1 };
+	byte[] pickupFlag = new byte[] { 1, 1, 0, 1, 1 };
 	byte[] dropOffFlag = new byte[] { 1, 1, 1, 1, 1 };
 
 	int[] workStart1 = new int[5];
+	
+
 	int[] workHours1 = new int[5];
 
 	int[] workStart2 = new int[5];
 	int[] workHours2 = new int[5];
 
-	static int penGrandma = 5000;
+	static int penGrandma = 0;
 
 	static int penPickUpToEarly = 10;
 	static int penPickUpToLate = 300;
@@ -35,6 +37,14 @@ public class Schedule {
 	static int penOvertime = 200;
 
 	static int penOverhead = 10;
+	
+	
+	static {
+		data.setParent1PrefferedStart( Utils.toMinutes(8, 00));
+		data.setParent2PrefferedStart( Utils.toMinutes(8, 00));
+		data.setParent1PrefferedEnd( Utils.toMinutes(16, 30));
+		data.setParent2PrefferedEnd( Utils.toMinutes(16, 30));
+	}
 
 	public Schedule(Schedule schedule) {
 		this.pickupFlag = Arrays.copyOf(schedule.pickupFlag, schedule.pickupFlag.length);
@@ -186,11 +196,21 @@ public class Schedule {
 				beforeHardStart += data.getParent1EarliesStart() - workStart1[i];
 			if (getParentWorkEnd(true, i) > data.getParent1Latest())
 				afterHardStop += getParentWorkEnd(true, i) - data.getParent1Latest();
+			
+			if (workStart1[i] < data.getParent1PrefferedStart())
+				beforePreferedStart += data.getParent1PrefferedStart() - workStart1[i];
+			if (getParentWorkEnd(true, i) > data.getParent1PrefferedEnd())
+				afterPreferedStop += getParentWorkEnd(true, i) - data.getParent1PrefferedEnd();
 
 			if (workStart2[i] < data.getParent2EarliesStart())
 				beforeHardStart += data.getParent2EarliesStart() - workStart2[i];
 			if (getParentWorkEnd(false, i) > data.getParent2Latest())
 				afterHardStop += getParentWorkEnd(false, i) - data.getParent2Latest();
+			
+			if (workStart2[i] < data.getParent2PrefferedStart())
+				beforePreferedStart += data.getParent2PrefferedStart() - workStart2[i];
+			if (getParentWorkEnd(false, i) > data.getParent2PrefferedEnd())
+				afterPreferedStop += getParentWorkEnd(false, i) - data.getParent2PrefferedEnd();
 		}
 
 		total += Utils.penaltyLinear(beforeHardStart, 100);
@@ -198,7 +218,7 @@ public class Schedule {
 		total += Utils.penaltyLinear(beforePreferedStart, 20);
 		total += Utils.penaltyLinear(afterPreferedStop, 20);
 
-		total += Utils.penaltyXn(grandmaUseCount, penGrandma);
+		//total += Utils.penaltyXn(grandmaUseCount, penGrandma);
 		total += Utils.penaltyLinear(dropOffTooEarly, penDropOffToEarly);
 		total += Utils.penaltyLinear(dropOffTooLate, penDropOffToLate);
 		total += Utils.penaltyLinear(pickUpTooEarly, penPickUpToEarly);
@@ -218,17 +238,20 @@ public class Schedule {
 		Schedule s = new Schedule(this);
 		int position = 0;
 		if (dimension < (position += s.pickupFlag.length)) {
+			
 			s.pickupFlag[position - dimension - 1] += step/15;
+			
 			if (s.pickupFlag[position - dimension - 1] > 2)
-				s.pickupFlag[position - dimension - 1] = 2;
-			else if (s.pickupFlag[position - dimension - 1] < 0)
 				s.pickupFlag[position - dimension - 1] = 0;
+			else if (s.pickupFlag[position - dimension - 1] < 0)
+				s.pickupFlag[position - dimension - 1] = 2;
+			
 		} else if (dimension < (position += s.dropOffFlag.length)) {
 			s.dropOffFlag[position - dimension - 1] += step/15;
 			if (s.dropOffFlag[position - dimension - 1] > 2)
-				s.dropOffFlag[position - dimension - 1] = 2;
-			else if (s.dropOffFlag[position - dimension - 1] < 0)
 				s.dropOffFlag[position - dimension - 1] = 0;
+			else if (s.dropOffFlag[position - dimension - 1] < 0)
+				s.dropOffFlag[position - dimension - 1] = 1;
 		} else if (dimension < (position += s.workHours1.length)) {
 			s.workHours1[position - dimension - 1] += step;
 			if (s.workHours1[position - dimension - 1] < 0)
@@ -251,6 +274,30 @@ public class Schedule {
 
 		return s;
 
+	}
+	
+	public byte[] getPickupFlag() {
+		return pickupFlag;
+	}
+
+	public byte[] getDropOffFlag() {
+		return dropOffFlag;
+	}
+
+	public int[] getWorkStart1() {
+		return workStart1;
+	}
+
+	public int[] getWorkHours1() {
+		return workHours1;
+	}
+
+	public int[] getWorkStart2() {
+		return workStart2;
+	}
+
+	public int[] getWorkHours2() {
+		return workHours2;
 	}
 
 }

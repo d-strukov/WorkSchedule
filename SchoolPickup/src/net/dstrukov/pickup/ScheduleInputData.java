@@ -8,6 +8,44 @@ public class ScheduleInputData {
 	private int parent2EarliesStart;
 	private int parent1Latest;
 	private int parent2Latest;
+	
+	private int parent1PrefferedStart;
+	private int parent2PrefferedStart;
+	private int parent1PrefferedEnd;
+	private int parent2PrefferedEnd;
+	
+	public int getParent1PrefferedStart() {
+		return parent1PrefferedStart;
+	}
+
+	public void setParent1PrefferedStart(int parent1PrefferedStart) {
+		this.parent1PrefferedStart = parent1PrefferedStart;
+	}
+
+	public int getParent2PrefferedStart() {
+		return parent2PrefferedStart;
+	}
+
+	public void setParent2PrefferedStart(int parent2PrefferedStart) {
+		this.parent2PrefferedStart = parent2PrefferedStart;
+	}
+
+	public int getParent1PrefferedEnd() {
+		return parent1PrefferedEnd;
+	}
+
+	public void setParent1PrefferedEnd(int parent1PrefferedEnd) {
+		this.parent1PrefferedEnd = parent1PrefferedEnd;
+	}
+
+	public int getParent2PrefferedEnd() {
+		return parent2PrefferedEnd;
+	}
+
+	public void setParent2PrefferedEnd(int parent2PrefferedEnd) {
+		this.parent2PrefferedEnd = parent2PrefferedEnd;
+	}
+
 	private int[] dropoffTimes;
 	private int[] pickupTimes;
 	private int parent1Travel;
